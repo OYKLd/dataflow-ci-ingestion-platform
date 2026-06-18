@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../lib/generated/prisma"
@@ -11,4 +6,74 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum UploadStatus {
+  PENDING
+  PROCESSING
+  SUCCESS
+  PARTIAL
+  FAILED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Source {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+
+  createdAt   DateTime @default(now())
+
+  schemas     SchemaVersion[]
+  uploads     FileUpload[]
+}
+
+model SchemaVersion {
+  id        String   @id @default(cuid())
+
+  sourceId  String
+  source    Source   @relation(fields: [sourceId], references: [id])
+
+  version   Int
+  schema    Json
+
+  createdAt DateTime @default(now())
+}
+
+model FileUpload {
+  id          String   @id @default(cuid())
+
+  sourceId    String
+  source      Source   @relation(fields: [sourceId], references: [id])
+
+  fileName    String
+
+  status      UploadStatus
+
+  totalRows   Int @default(0)
+  validRows   Int @default(0)
+  invalidRows Int @default(0)
+
+  createdAt   DateTime @default(now())
+
+  errors      ValidationError[]
+}
+
+model ValidationError {
+  id          String   @id @default(cuid())
+
+  uploadId    String
+  upload      FileUpload @relation(fields: [uploadId], references: [id])
+
+  rowNumber   Int
+
+  columnName  String
+
+  message     String
 }
