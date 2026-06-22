@@ -13,8 +13,12 @@ export async function uploadFileAction(
     throw new Error("File required");
   }
 
-  await createUpload(
+  const upload = await createUpload(
     sourceId,
     file.name
   );
+
+  setTimeout(() => {
+    console.log(`Processing upload ${upload.id}`);
+  }, 0);
 }
