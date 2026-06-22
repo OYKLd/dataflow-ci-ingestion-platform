@@ -19,3 +19,15 @@ export async function getSources() {
     },
   });
 }
+
+export async function getSourceById(id: string) {
+  return prisma.source.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      schemas: true,
+      uploads: true,
+    },
+  });
+}
