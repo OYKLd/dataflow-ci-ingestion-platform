@@ -2,6 +2,9 @@ import { notFound } from "next/navigation";
 import {
   getSourceById,
 } from "@/features/source-management/services/source.service";
+import {
+  UploadForm,
+} from "@/features/file-upload/components/upload-form";
 
 type Props = {
   params: Promise<{
@@ -44,6 +47,10 @@ export default async function SourceDetailsPage(
         <p>
           {source.uploads.length} upload(s)
         </p>
+      </div>
+
+      <div className="mt-8">
+        <UploadForm sourceId={source.id} />
       </div>
     </main>
   );
