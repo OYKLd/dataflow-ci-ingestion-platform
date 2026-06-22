@@ -7,14 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UploadStatus {
-  PENDING
-  PROCESSING
-  SUCCESS
-  PARTIAL
-  FAILED
-}
-
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -23,60 +15,54 @@ model User {
 }
 
 model Source {
-  id          String   @id @default(cuid())
+  id          String          @id @default(cuid())
   name        String
   description String?
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  schemas     SchemaVersion[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
   uploads     FileUpload[]
+  schemas     SchemaVersion[]
 }
 
 model SchemaVersion {
   id        String   @id @default(cuid())
-
   sourceId  String
-  source    Source   @relation(fields: [sourceId], references: [id])
-
   version   Int
   schema    Json
-
   createdAt DateTime @default(now())
+  source    Source   @relation(fields: [sourceId], references: [id])
 
   @@unique([sourceId, version])
 }
 
 model FileUpload {
-  id          String   @id @default(cuid())
-
+  id          String            @id @default(cuid())
   sourceId    String
-  source      Source   @relation(fields: [sourceId], references: [id])
-
   fileName    String
-
   status      UploadStatus
-
-  totalRows   Int @default(0)
-  validRows   Int @default(0)
-  invalidRows Int @default(0)
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
+  totalRows   Int               @default(0)
+  validRows   Int               @default(0)
+  invalidRows Int               @default(0)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  filePath    String
+  source      Source            @relation(fields: [sourceId], references: [id])
   errors      ValidationError[]
 }
 
 model ValidationError {
-  id          String   @id @default(cuid())
+  id         String     @id @default(cuid())
+  uploadId   String
+  rowNumber  Int
+  columnName String
+  message    String
+  upload     FileUpload @relation(fields: [uploadId], references: [id])
+}
 
-  uploadId    String
-  upload      FileUpload @relation(fields: [uploadId], references: [id])
-
-  rowNumber   Int
-
-  columnName  String
-
-  message     String
+enum UploadStatus {
+  PENDING
+  PROCESSING
+  SUCCESS
+  PARTIAL
+  FAILED
 }
