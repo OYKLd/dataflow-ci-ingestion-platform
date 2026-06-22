@@ -1,4 +1,5 @@
 import { getSources } from "@/features/source-management/services/source.service";
+import Link from "next/link";
 
 export default async function SourcesPage() {
   const sources = await getSources();
@@ -8,7 +9,14 @@ export default async function SourcesPage() {
       <h1 className="text-3xl font-bold mb-6">
         Data Sources
       </h1>
-
+        <div className="mb-6">
+  <Link
+    href="/sources/new"
+    className="border rounded px-4 py-2"
+  >
+    New Source
+  </Link> 
+</div>
       {sources.length === 0 ? (
         <p>No sources found.</p>
       ) : (
