@@ -78,3 +78,30 @@ export async function createValidationErrors(
     })),
   });
 }
+
+export async function getUploadReport(
+  uploadId: string
+) {
+  return prisma.fileUpload.findUnique({
+    where: {
+      id: uploadId,
+    },
+    include: {
+      errors: true,
+      source: true,
+    },
+  });
+}
+
+export async function getUploadsBySource(
+  sourceId: string
+) {
+  return prisma.fileUpload.findMany({
+    where: {
+      sourceId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}
