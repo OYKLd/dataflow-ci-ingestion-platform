@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createSourceSchema } from "../schemas/source.schema";
 import { createSource } from "../services/source.service";
+import { createSchemaVersion } from "@/features/source-schema/services/schema.service";
 
 export async function createSourceAction(
   formData: FormData
@@ -20,10 +21,35 @@ export async function createSourceAction(
     );
   }
 
-  await createSource(
+  const source = await createSource(
     parsed.data.name,
     parsed.data.description
   );
+
+  await createSchemaVersion(source.id, {
+    columns: [
+      {
+        name: "date",
+        type: "date",
+        required: true,
+      },
+      {
+        name: "region",
+        type: "string",
+        required: true,
+      },
+      {
+        name: "montant_fcfa",
+        type: "number",
+        required: true,
+      },
+      {
+        name: "client_id",
+        type: "string",
+        required: true,
+      },
+    ],
+  });
 
   redirect("/sources");
 }
