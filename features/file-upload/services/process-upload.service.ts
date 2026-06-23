@@ -5,6 +5,7 @@ import {
   updateUploadStats,
   createValidationErrors,
 } from "./upload.service";
+import { SourceSchema } from "@/features/source-management/types/schema";
 import {
   getLatestSchemaVersion,
 } from "@/features/source-schema/services/schema.service";
@@ -27,6 +28,11 @@ export async function processUpload(
     throw new Error("Schema not found");
   }
 
+  const schema = schemaVersion.schema as SourceSchema;
+  if (!schema || !Array.isArray(schema.columns)) {
+    throw new Error("Invalid schema format");
+  }
+
   const fileContent = await fs.readFile(upload.filePath, "utf8");
 
   const result = Papa.parse(fileContent, {
@@ -35,7 +41,8 @@ export async function processUpload(
   });
 
   const rows = result.data as Record<string, string>[];
-
+  console.log("FIRST ROW");
+  console.log(rows[0]);
   let validRows = 0;
   let invalidRows = 0;
   const allErrors: {
@@ -46,7 +53,7 @@ export async function processUpload(
 
   for (let index = 0; index < rows.length; index++) {
     const row = rows[index];
-    const errors = validateRow(row, index + 1, schemaVersion.schema);
+    const errors = validateRow(row, index + 1, schema);
 
     if (errors.length === 0) {
       validRows++;

@@ -40,7 +40,7 @@ export async function createSourceAction(
       },
       {
         name: "montant_fcfa",
-        type: "number",
+        type: "integer",
         required: true,
       },
       {

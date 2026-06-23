@@ -12,7 +12,7 @@ const schema = {
     },
     {
       name: "montant_fcfa",
-      type: "number",
+      type: "integer",
       required: true,
     },
     {

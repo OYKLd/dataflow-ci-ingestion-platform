@@ -49,7 +49,7 @@ export function UploadForm({
     }
 
     const result = await response.json();
-    setStatus(`Uploaded ${result.rowCount} rows`);
+    setStatus(`File uploaded successfully`);
   }
 
   return (

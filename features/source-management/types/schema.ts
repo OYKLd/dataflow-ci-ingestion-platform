@@ -1,9 +1,22 @@
-export interface SchemaColumn {
+export type ColumnDefinition = {
   name: string;
-  type: string;
-  required: boolean;
-}
+  type:
+    | "string"
+    | "date"
+    | "integer"
+    | "enum";
 
-export interface SourceSchema {
-  columns: SchemaColumn[];
-}
+  required: boolean;
+
+  pattern?: string;
+
+  allowed_values?: string[];
+
+  min?: number;
+
+  max?: number;
+};
+
+export type SourceSchema = {
+  columns: ColumnDefinition[];
+};
