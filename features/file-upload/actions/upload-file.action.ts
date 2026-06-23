@@ -40,12 +40,7 @@ export async function uploadFileAction(
       filePath
     );
 
-    const rows = await processUpload(
-      filePath
-    );
-    console.log(rows);
-
-  setTimeout(() => {
-    console.log(`Processing upload ${upload.id}`);
-  }, 0);
+    setTimeout(() => {
+      processUpload(upload.id).catch(console.error);
+    }, 0);
 }

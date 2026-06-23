@@ -17,10 +17,16 @@ export function UploadForm({
     );
 
     const file = fileInput?.files?.[0];
-    if (!file || !file.name) {
+    if (!file) {
       setStatus("Please select a file before uploading.");
       return;
     }
+
+    console.log("UploadForm submitting file", {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+    });
 
     setStatus("Uploading...");
 

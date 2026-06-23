@@ -11,7 +11,7 @@ export async function POST(request: Request) {
 
     const formData = await request.formData();
     const sourceId = formData.get("sourceId");
-    const file = formData.get("file") as File | null;
+    const fileEntry = formData.get("file");
 
     if (!sourceId || typeof sourceId !== "string") {
       return NextResponse.json(
@@ -20,16 +20,24 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!file) {
+    if (!fileEntry || typeof fileEntry === "string") {
       return NextResponse.json(
         { error: "file required" },
         { status: 400 }
       );
     }
 
-    const fileName = typeof file.name === "string" && file.name
-      ? file.name
+    const file = fileEntry as File | Blob;
+    const fileName = typeof (file as any).name === "string" && (file as any).name
+      ? (file as any).name
       : `upload-${Date.now()}.csv`;
+
+    console.log("/api/upload file metadata", {
+      type: typeof file,
+      name: (file as any).name,
+      size: (file as any).size,
+      keys: Object.keys(file as any),
+    });
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
@@ -47,12 +55,12 @@ export async function POST(request: Request) {
       filePath
     );
 
-    const rows = await processUpload(filePath);
-    console.log("/api/upload rows", rows.length);
+    setTimeout(() => {
+      processUpload(upload.id).catch(console.error);
+    }, 0);
 
     return NextResponse.json({
       uploadId: upload.id,
-      rowCount: rows.length,
     });
   } catch (error) {
     console.error("/api/upload error", error);

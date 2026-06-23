@@ -29,3 +29,16 @@ export async function createSchemaVersion(
     },
   });
 }
+
+export async function getLatestSchemaVersion(
+  sourceId: string
+) {
+  return prisma.schemaVersion.findFirst({
+    where: {
+      sourceId,
+    },
+    orderBy: {
+      version: "desc",
+    },
+  });
+}
