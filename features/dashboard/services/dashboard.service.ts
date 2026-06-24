@@ -32,3 +32,63 @@ export async function getDashboardStats() {
     uploads,
   };
 }
+
+export async function getUploadsBySource() {
+  const sources = await prisma.source.findMany({
+    include: {
+      uploads: true,
+    },
+  });
+
+  return sources.map((source) => ({
+    name: source.name,
+    uploads: source.uploads.length,
+  }));
+}
+
+export async function getStatusDistribution() {
+  const uploads = await prisma.fileUpload.findMany();
+
+  const success = uploads.filter(
+    (u) => u.status === "SUCCESS"
+  ).length;
+
+  const partial = uploads.filter(
+    (u) => u.status === "PARTIAL"
+  ).length;
+
+  const failed = uploads.filter(
+    (u) => u.status === "FAILED"
+  ).length;
+
+  return [
+    {
+      name: "SUCCESS",
+      value: success,
+    },
+    {
+      name: "PARTIAL",
+      value: partial,
+    },
+    {
+      name: "FAILED",
+      value: failed,
+    },
+  ];
+}
+
+export async function getRowsBySource() {
+  const sources = await prisma.source.findMany({
+    include: {
+      uploads: true,
+    },
+  });
+
+  return sources.map((source) => ({
+    name: source.name,
+    rows: source.uploads.reduce(
+      (sum, upload) => sum + upload.validRows,
+      0
+    ),
+  }));
+}

@@ -1,8 +1,25 @@
 import Link from "next/link";
 import { getDashboardStats } from "@/features/dashboard/services/dashboard.service";
+import {
+  getUploadsBySource,
+  getStatusDistribution,
+  getRowsBySource,
+} from "@/features/dashboard/services/dashboard.service";
+import {
+  UploadsBySourceChart,
+} from "@/features/dashboard/components/uploads-by-source-chart";
+import {
+  StatusChart,
+} from "@/features/dashboard/components/status-chart";
+import {
+  RowsChart,
+} from "@/features/dashboard/components/rows-chart";
 
 export default async function HomePage() {
   const stats = await getDashboardStats();
+  const uploadsBySource = await getUploadsBySource();
+  const statusDistribution = await getStatusDistribution();
+  const rowsBySource = await getRowsBySource();
 
   const successRate =
     stats.totalUploads === 0
@@ -59,6 +76,12 @@ export default async function HomePage() {
             {stats.totalRowsProcessed}
           </p>
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+        <UploadsBySourceChart data={uploadsBySource} />
+        <StatusChart data={statusDistribution} />
+        <RowsChart data={rowsBySource} />
       </div>
 
       <div className="border rounded p-6">
