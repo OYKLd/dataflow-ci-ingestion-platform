@@ -1,75 +1,34 @@
 import { prisma } from "@/lib/prisma";
 
 export async function getDashboardStats() {
-  const [totalSources, totalUploads, uploadsByStatus, rowsStats] = await Promise.all([
-    prisma.source.count(),
-    prisma.fileUpload.count(),
-    prisma.fileUpload.groupBy({
-      by: ["status"],
-      _count: true,
-    }),
-    prisma.fileUpload.aggregate({
-      _sum: {
-        totalRows: true,
-        validRows: true,
-        invalidRows: true,
-      },
-    }),
-  ]);
+  const uploads = await prisma.fileUpload.findMany({
+    include: {
+      source: true,
+    },
+  });
+
+  const totalUploads = uploads.length;
+
+  const successfulUploads = uploads.filter(
+    (upload) =>
+      upload.status === "SUCCESS" ||
+      upload.status === "PARTIAL"
+  ).length;
+
+  const totalRowsProcessed = uploads.reduce(
+    (sum, upload) => sum + upload.totalRows,
+    0
+  );
+
+  const activeSources = new Set(
+    uploads.map((upload) => upload.sourceId)
+  ).size;
 
   return {
-    totalSources,
     totalUploads,
-    uploadsByStatus,
-    rowsStats,
+    successfulUploads,
+    totalRowsProcessed,
+    activeSources,
+    uploads,
   };
-}
-
-export async function getUploadsBySourceChart() {
-  const data = await prisma.source.findMany({
-    include: {
-      _count: {
-        select: { uploads: true },
-      },
-    },
-  });
-
-  return data.map((source) => ({
-    name: source.name,
-    uploads: source._count.uploads,
-  }));
-}
-
-export async function getStatusChartData() {
-  const data = await prisma.fileUpload.groupBy({
-    by: ["status"],
-    _count: true,
-  });
-
-  return data.map((item) => ({
-    status: item.status,
-    count: item._count,
-  }));
-}
-
-export async function getRowsChartData() {
-  const data = await prisma.fileUpload.findMany({
-    select: {
-      fileName: true,
-      totalRows: true,
-      validRows: true,
-      invalidRows: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    take: 10,
-  });
-
-  return data.map((item) => ({
-    fileName: item.fileName,
-    totalRows: item.totalRows,
-    validRows: item.validRows,
-    invalidRows: item.invalidRows,
-  }));
 }
