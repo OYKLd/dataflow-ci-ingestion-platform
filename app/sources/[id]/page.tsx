@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import {
   getSourceById,
 } from "@/features/source-management/services/source.service";
@@ -48,35 +47,33 @@ export default async function SourceDetailsPage(
         <p className="mb-4">
           {source.uploads.length} upload(s)
         </p>
-        {source.uploads.length === 0 ? (
-          <p>No uploads yet.</p>
-        ) : (
-          <div className="space-y-4">
-            {source.uploads.map((upload) => (
-              <div
-                key={upload.id}
-                className="border rounded p-4"
+        <div className="space-y-3">
+          {source.uploads.map((upload) => (
+            <div
+              key={upload.id}
+              className="border rounded p-3"
+            >
+              <p>
+                <strong>File:</strong>{" "}
+                {upload.fileName}
+              </p>
+              <p>
+                <strong>Status:</strong>{" "}
+                {upload.status}
+              </p>
+              <p>
+                <strong>Total Rows:</strong>{" "}
+                {upload.totalRows}
+              </p>
+              <a
+                href={`/uploads/${upload.id}`}
+                className="text-blue-600 underline"
               >
-                <p className="font-medium">
-                  {upload.fileName}
-                </p>
-                <p>
-                  Status: {upload.status}
-                </p>
-                <p>
-                  Rows: {upload.validRows}/
-                  {upload.totalRows} valid
-                </p>
-                <Link
-                  href={`/uploads/${upload.id}`}
-                  className="text-blue-600 underline"
-                >
-                  View report
-                </Link>
-              </div>
-            ))}
-          </div>
-        )}
+                View Report
+              </a>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="mt-8">

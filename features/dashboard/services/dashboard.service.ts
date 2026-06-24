@@ -1,13 +1,26 @@
 import { prisma } from "@/lib/prisma";
 
-export async function getDashboardStats() {
-  const uploads = await prisma.fileUpload.findMany({
-    include: {
-      source: true,
-    },
-  });
+const emptyDashboardStats = {
+  totalUploads: 0,
+  successfulUploads: 0,
+  totalRowsProcessed: 0,
+  activeSources: 0,
+  uploads: [],
+};
 
-  const totalUploads = uploads.length;
+function logDashboardError(error: unknown) {
+  console.error("Dashboard service failed to load data:", error);
+}
+
+export async function getDashboardStats() {
+  try {
+    const uploads = await prisma.fileUpload.findMany({
+      include: {
+        source: true,
+      },
+    });
+
+    const totalUploads = uploads.length;
 
   const successfulUploads = uploads.filter(
     (upload) =>
@@ -24,30 +37,40 @@ export async function getDashboardStats() {
     uploads.map((upload) => upload.sourceId)
   ).size;
 
-  return {
-    totalUploads,
-    successfulUploads,
-    totalRowsProcessed,
-    activeSources,
-    uploads,
-  };
+    return {
+      totalUploads,
+      successfulUploads,
+      totalRowsProcessed,
+      activeSources,
+      uploads,
+    };
+  } catch (error) {
+    logDashboardError(error);
+    return emptyDashboardStats;
+  }
 }
 
 export async function getUploadsBySource() {
-  const sources = await prisma.source.findMany({
-    include: {
-      uploads: true,
-    },
-  });
+  try {
+    const sources = await prisma.source.findMany({
+      include: {
+        uploads: true,
+      },
+    });
 
-  return sources.map((source) => ({
-    name: source.name,
-    uploads: source.uploads.length,
-  }));
+    return sources.map((source) => ({
+      name: source.name,
+      uploads: source.uploads.length,
+    }));
+  } catch (error) {
+    logDashboardError(error);
+    return [];
+  }
 }
 
 export async function getStatusDistribution() {
-  const uploads = await prisma.fileUpload.findMany();
+  try {
+    const uploads = await prisma.fileUpload.findMany();
 
   const success = uploads.filter(
     (u) => u.status === "SUCCESS"
@@ -61,34 +84,47 @@ export async function getStatusDistribution() {
     (u) => u.status === "FAILED"
   ).length;
 
-  return [
-    {
-      name: "SUCCESS",
-      value: success,
-    },
-    {
-      name: "PARTIAL",
-      value: partial,
-    },
-    {
-      name: "FAILED",
-      value: failed,
-    },
-  ];
+    return [
+      {
+        name: "SUCCESS",
+        value: success,
+      },
+      {
+        name: "PARTIAL",
+        value: partial,
+      },
+      {
+        name: "FAILED",
+        value: failed,
+      },
+    ];
+  } catch (error) {
+    logDashboardError(error);
+    return [
+      { name: "SUCCESS", value: 0 },
+      { name: "PARTIAL", value: 0 },
+      { name: "FAILED", value: 0 },
+    ];
+  }
 }
 
 export async function getRowsBySource() {
-  const sources = await prisma.source.findMany({
-    include: {
-      uploads: true,
-    },
-  });
+  try {
+    const sources = await prisma.source.findMany({
+      include: {
+        uploads: true,
+      },
+    });
 
-  return sources.map((source) => ({
-    name: source.name,
-    rows: source.uploads.reduce(
-      (sum, upload) => sum + upload.validRows,
-      0
-    ),
-  }));
+    return sources.map((source) => ({
+      name: source.name,
+      rows: source.uploads.reduce(
+        (sum, upload) => sum + upload.validRows,
+        0
+      ),
+    }));
+  } catch (error) {
+    logDashboardError(error);
+    return [];
+  }
 }

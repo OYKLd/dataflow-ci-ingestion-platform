@@ -1,21 +1,15 @@
 import Link from "next/link";
-import { getDashboardStats } from "@/features/dashboard/services/dashboard.service";
 import {
+  getDashboardStats,
   getUploadsBySource,
   getStatusDistribution,
   getRowsBySource,
 } from "@/features/dashboard/services/dashboard.service";
-import {
-  UploadsBySourceChart,
-} from "@/features/dashboard/components/uploads-by-source-chart";
-import {
-  StatusChart,
-} from "@/features/dashboard/components/status-chart";
-import {
-  RowsChart,
-} from "@/features/dashboard/components/rows-chart";
+import { UploadsBySourceChart } from "@/features/dashboard/components/uploads-by-source-chart";
+import { StatusChart } from "@/features/dashboard/components/status-chart";
+import { RowsChart } from "@/features/dashboard/components/rows-chart";
 
-export default async function HomePage() {
+export default async function Home() {
   const stats = await getDashboardStats();
   const uploadsBySource = await getUploadsBySource();
   const statusDistribution = await getStatusDistribution();
@@ -78,7 +72,7 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <UploadsBySourceChart data={uploadsBySource} />
         <StatusChart data={statusDistribution} />
         <RowsChart data={rowsBySource} />
