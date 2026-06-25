@@ -5,6 +5,8 @@ import {
 import {
   UploadForm,
 } from "@/features/file-upload/components/upload-form";
+import { getCurrentUser } from "@/lib/auth";
+import { canUpload } from "@/lib/permissions";
 
 type Props = {
   params: Promise<{
@@ -21,7 +23,7 @@ export default async function SourceDetailsPage(
   if (!source) {
     notFound();
   }
-
+  const user = await getCurrentUser();
   return (
     <main className="p-8">
       <h1 className="text-3xl font-bold">
@@ -77,7 +79,7 @@ export default async function SourceDetailsPage(
       </div>
 
       <div className="mt-8">
-        <UploadForm sourceId={source.id} />
+        {canUpload(user) && <UploadForm sourceId={source.id} />}
       </div>
     </main>
   );
