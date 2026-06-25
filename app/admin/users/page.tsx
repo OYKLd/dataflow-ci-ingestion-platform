@@ -1,8 +1,11 @@
 import { getUsers } from "@/features/auth/services/admin-user.service";
+import { requireAdmin } from "@/lib/auth-server";
+
 
 export default async function UsersPage() {
   const users = await getUsers();
-
+    await requireAdmin();
+    
   return (
     <main className="p-8">
       <h1 className="text-3xl font-bold mb-6">
