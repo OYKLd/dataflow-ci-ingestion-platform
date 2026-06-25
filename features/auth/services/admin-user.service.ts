@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { createAuditLog } from "@/features/audit/services/audit.service";
 
 export async function getUsers() {
   return prisma.user.findMany({
@@ -12,7 +13,7 @@ export async function updateUserRole(
   userId: string,
   role: "ADMIN" | "ANALYST" | "VIEWER"
 ) {
-  return prisma.user.update({
+  const user = await prisma.user.update({
     where: {
       id: userId,
     },
@@ -20,4 +21,15 @@ export async function updateUserRole(
       role,
     },
   });
+
+  await createAuditLog({
+    action: "CHANGE_ROLE",
+    entityId: user.id,
+    entityType: "User",
+    metadata: {
+      role,
+    },
+  });
+
+  return user;
 }

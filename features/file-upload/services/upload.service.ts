@@ -1,11 +1,12 @@
 import { prisma } from "@/lib/prisma";
+import { createAuditLog } from "@/features/audit/services/audit.service";
 
 export async function createUpload(
   sourceId: string,
   fileName: string,
   filePath: string
 ) {
-  return prisma.fileUpload.create({
+  const upload = await prisma.fileUpload.create({
     data: {
       sourceId,
       fileName,
@@ -13,11 +14,20 @@ export async function createUpload(
       status: "PENDING",
     },
   });
+
+  await createAuditLog({
+    action: "UPLOAD_FILE",
+    entityId: upload.id,
+    entityType: "FileUpload",
+    metadata: {
+      fileName,
+    },
+  });
+
+  return upload;
 }
 
-export async function getUploadById(
-  uploadId: string
-) {
+export async function getUploadById(uploadId: string) {
   return prisma.fileUpload.findUnique({
     where: {
       id: uploadId,
@@ -40,10 +50,7 @@ export async function getUploadById(
 export async function updateUploadStats(
   uploadId: string,
   data: {
-    status:
-      | "SUCCESS"
-      | "PARTIAL"
-      | "FAILED";
+    status: "SUCCESS" | "PARTIAL" | "FAILED";
     totalRows: number;
     validRows: number;
     invalidRows: number;
@@ -79,9 +86,7 @@ export async function createValidationErrors(
   });
 }
 
-export async function getUploadReport(
-  uploadId: string
-) {
+export async function getUploadReport(uploadId: string) {
   return prisma.fileUpload.findUnique({
     where: {
       id: uploadId,
@@ -93,9 +98,7 @@ export async function getUploadReport(
   });
 }
 
-export async function getUploadsBySource(
-  sourceId: string
-) {
+export async function getUploadsBySource(sourceId: string) {
   return prisma.fileUpload.findMany({
     where: {
       sourceId,
@@ -105,4 +108,3 @@ export async function getUploadsBySource(
     },
   });
 }
-
