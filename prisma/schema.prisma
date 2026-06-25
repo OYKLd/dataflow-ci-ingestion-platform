@@ -13,6 +13,28 @@ enum UserRole {
   VIEWER
 }
 
+enum AuditAction {
+  CREATE_SOURCE
+  CREATE_SCHEMA
+  UPLOAD_FILE
+  CHANGE_ROLE
+}
+
+model AuditLog {
+  id         String @id @default(cuid())
+
+  action     AuditAction
+
+  entityId   String?
+  entityType String?
+
+  actorEmail String?
+
+  metadata   Json?
+
+  createdAt  DateTime @default(now())
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
