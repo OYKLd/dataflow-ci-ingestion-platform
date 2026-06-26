@@ -23,12 +23,15 @@ export default async function SourceDetailsPage(
   if (!source) {
     notFound();
   }
+
   const user = await getCurrentUser();
+
   return (
     <main className="p-8">
       <h1 className="text-3xl font-bold">
         {source.name}
       </h1>
+
       <p className="mt-2">
         {source.description}
       </p>
@@ -37,18 +40,29 @@ export default async function SourceDetailsPage(
         <h2 className="text-xl font-semibold">
           Schema Versions
         </h2>
+
         <p>
           {source.schemas.length} version(s)
         </p>
+
+        <pre className="border p-4 overflow-auto mt-4">
+          {JSON.stringify(
+            source.schemas[0]?.schema,
+            null,
+            2
+          )}
+        </pre>
       </div>
 
       <div className="mt-8">
         <h2 className="text-xl font-semibold">
           Uploads
         </h2>
+
         <p className="mb-4">
           {source.uploads.length} upload(s)
         </p>
+
         <div className="space-y-3">
           {source.uploads.map((upload) => (
             <div
@@ -59,14 +73,17 @@ export default async function SourceDetailsPage(
                 <strong>File:</strong>{" "}
                 {upload.fileName}
               </p>
+
               <p>
                 <strong>Status:</strong>{" "}
                 {upload.status}
               </p>
+
               <p>
                 <strong>Total Rows:</strong>{" "}
                 {upload.totalRows}
               </p>
+
               <a
                 href={`/uploads/${upload.id}`}
                 className="text-blue-600 underline"

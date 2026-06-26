@@ -7,41 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  ADMIN
-  ANALYST
-  VIEWER
-}
-
-enum AuditAction {
-  CREATE_SOURCE
-  CREATE_SCHEMA
-  UPLOAD_FILE
-  CHANGE_ROLE
-}
-
 model AuditLog {
-  id         String @id @default(cuid())
-
+  id         String      @id @default(cuid())
   action     AuditAction
-
   entityId   String?
   entityType String?
-
   actorEmail String?
-
   metadata   Json?
-
-  createdAt  DateTime @default(now())
+  createdAt  DateTime    @default(now())
 }
 
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
   password  String
-  role      UserRole @default(VIEWER)
-
   createdAt DateTime @default(now())
+  role      UserRole @default(VIEWER)
 }
 
 model Source {
@@ -66,26 +47,19 @@ model SchemaVersion {
 }
 
 model FileUpload {
-  id            String   @id @default(cuid())
-
-  sourceId      String
-  source        Source   @relation(fields: [sourceId], references: [id])
-
-  fileName      String
-  filePath      String
-
-  status        UploadStatus
-
-  totalRows     Int @default(0)
-  validRows     Int @default(0)
-  invalidRows   Int @default(0)
-
-  qualityScore  Float @default(0)
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  errors        ValidationError[]
+  id           String            @id @default(cuid())
+  sourceId     String
+  fileName     String
+  status       UploadStatus
+  totalRows    Int               @default(0)
+  validRows    Int               @default(0)
+  invalidRows  Int               @default(0)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  filePath     String
+  qualityScore Float             @default(0)
+  source       Source            @relation(fields: [sourceId], references: [id])
+  errors       ValidationError[]
 }
 
 model ValidationError {
@@ -95,6 +69,19 @@ model ValidationError {
   columnName String
   message    String
   upload     FileUpload @relation(fields: [uploadId], references: [id])
+}
+
+enum UserRole {
+  ADMIN
+  ANALYST
+  VIEWER
+}
+
+enum AuditAction {
+  CREATE_SOURCE
+  CREATE_SCHEMA
+  UPLOAD_FILE
+  CHANGE_ROLE
 }
 
 enum UploadStatus {

@@ -16,29 +16,37 @@ import {
 export async function processUpload(
   uploadId: string
 ) {
+  console.log("1 - processUpload démarré")
   const upload = await getUploadById(uploadId);
+  console.log("2 - Upload récupéré", upload);
 
   if (!upload) {
     throw new Error("Upload not found");
   }
 
   const schemaVersion = await getLatestSchemaVersion(upload.sourceId);
+  console.log("3 - Schéma récupéré", schemaVersion);
 
   if (!schemaVersion) {
     throw new Error("Schema not found");
   }
 
-  const schema = schemaVersion.schema as SourceSchema;
+  const raw = schemaVersion.schema as any;
+
+  const schema = raw?.schema;
+
   if (!schema || !Array.isArray(schema.columns)) {
     throw new Error("Invalid schema format");
   }
 
   const fileContent = await fs.readFile(upload.filePath, "utf8");
+  console.log("5 - Fichier lu");
 
   const result = Papa.parse(fileContent, {
     header: true,
     skipEmptyLines: true,
   });
+  console.log("6 - CSV parsé", result.data.length);
 
   const rows = result.data as Record<string, string>[];
   console.log("FIRST ROW");
@@ -63,6 +71,7 @@ export async function processUpload(
     }
   }
 
+  console.log("7 - Mise à jour des statistiques");
   await createValidationErrors(upload.id, allErrors);
 
   const status =
@@ -87,4 +96,5 @@ const qualityScore =
     invalidRows,
     qualityScore,
   });
+  console.log("8 - Terminé");
 }
