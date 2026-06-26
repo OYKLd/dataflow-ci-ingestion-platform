@@ -71,11 +71,20 @@ export async function processUpload(
       : validRows > 0
       ? "PARTIAL"
       : "FAILED";
-
+const qualityScore =
+  rows.length === 0
+    ? 0
+    : Number(
+        (
+          (validRows / rows.length) *
+          100
+        ).toFixed(2)
+      );
   await updateUploadStats(upload.id, {
     status,
     totalRows: rows.length,
     validRows,
     invalidRows,
+    qualityScore,
   });
 }

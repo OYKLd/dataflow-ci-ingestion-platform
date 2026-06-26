@@ -66,18 +66,26 @@ model SchemaVersion {
 }
 
 model FileUpload {
-  id          String            @id @default(cuid())
-  sourceId    String
-  fileName    String
-  status      UploadStatus
-  totalRows   Int               @default(0)
-  validRows   Int               @default(0)
-  invalidRows Int               @default(0)
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-  filePath    String
-  source      Source            @relation(fields: [sourceId], references: [id])
-  errors      ValidationError[]
+  id            String   @id @default(cuid())
+
+  sourceId      String
+  source        Source   @relation(fields: [sourceId], references: [id])
+
+  fileName      String
+  filePath      String
+
+  status        UploadStatus
+
+  totalRows     Int @default(0)
+  validRows     Int @default(0)
+  invalidRows   Int @default(0)
+
+  qualityScore  Float @default(0)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  errors        ValidationError[]
 }
 
 model ValidationError {

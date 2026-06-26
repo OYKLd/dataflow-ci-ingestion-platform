@@ -50,10 +50,14 @@ export async function getUploadById(uploadId: string) {
 export async function updateUploadStats(
   uploadId: string,
   data: {
-    status: "SUCCESS" | "PARTIAL" | "FAILED";
+    status:
+      | "SUCCESS"
+      | "PARTIAL"
+      | "FAILED";
     totalRows: number;
     validRows: number;
     invalidRows: number;
+    qualityScore: number;
   }
 ) {
   return prisma.fileUpload.update({

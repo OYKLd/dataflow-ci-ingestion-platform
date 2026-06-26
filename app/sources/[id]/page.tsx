@@ -78,8 +78,8 @@ export default async function SourceDetailsPage(
         </div>
       </div>
 
-      <div className="mt-8">
-        {canUpload(user) && <UploadForm sourceId={source.id} />}
+      <div className="mt-8 border p-4">
+        <UploadForm sourceId={source.id} />
       </div>
     </main>
   );
