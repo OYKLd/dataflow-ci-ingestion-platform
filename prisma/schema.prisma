@@ -25,6 +25,15 @@ model User {
   role      UserRole @default(VIEWER)
 }
 
+model Invitation {
+  id        String   @id @default(cuid())
+  email     String
+  role      UserRole
+  token     String   @unique
+  used      Boolean  @default(false)
+  expiresAt DateTime
+}
+
 model Source {
   id          String          @id @default(cuid())
   name        String
