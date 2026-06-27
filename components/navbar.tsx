@@ -35,6 +35,12 @@ export function Navbar() {
               >
                 Quality
               </Link>
+              <Link
+                href="/my-uploads"
+                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                My Uploads
+              </Link>
               {session?.user?.role === UserRole.ADMIN && (
                 <>
                   <Link

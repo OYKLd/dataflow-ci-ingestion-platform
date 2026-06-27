@@ -2,8 +2,16 @@
 
 import { prisma } from "@/lib/prisma";
 import { createAuditLog } from "@/features/audit/services/audit.service";
+import { getCurrentUser } from "@/lib/auth";
+import { canCreateSchema } from "@/lib/permissions";
 
 export async function createSchemaVersionAction(formData: FormData) {
+  const user = await getCurrentUser();
+
+  if (!user || !canCreateSchema(user)) {
+    return { error: "Unauthorized" };
+  }
+
   const sourceId = formData.get("sourceId") as string;
   const schemaJson = formData.get("schema") as string;
 
@@ -39,6 +47,7 @@ export async function createSchemaVersionAction(formData: FormData) {
       metadata: {
         version: nextVersion,
       },
+      actorEmail: user.email,
     });
 
     return { success: true, schemaVersion };

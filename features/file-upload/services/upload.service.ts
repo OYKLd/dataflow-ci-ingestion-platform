@@ -112,3 +112,36 @@ export async function getUploadsBySource(sourceId: string) {
     },
   });
 }
+
+export async function getUploadsByUser(userEmail: string) {
+  const auditLogs = await prisma.auditLog.findMany({
+    where: {
+      action: "UPLOAD_FILE",
+      actorEmail: userEmail,
+    },
+    select: {
+      entityId: true,
+    },
+  });
+
+  const uploadIds = auditLogs.map((log) => log.entityId);
+
+  if (uploadIds.length === 0) {
+    return [];
+  }
+
+  return prisma.fileUpload.findMany({
+    where: {
+      id: {
+        in: uploadIds as string[],
+      },
+    },
+    include: {
+      source: true,
+      errors: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}
