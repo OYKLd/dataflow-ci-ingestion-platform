@@ -43,4 +43,5 @@ next-env.d.ts
 /lib/generated/prisma
 
 # uploads directory for user file uploads
-uploads/
+/uploads/
+!app/uploads/

@@ -1,10 +1,11 @@
 import { getUsers } from "@/features/auth/services/admin-user.service";
+import { RoleSelect } from "@/components/role-select";
 import { requireAdmin } from "@/lib/auth-server";
 
 
 export default async function UsersPage() {
+  await requireAdmin();
   const users = await getUsers();
-    await requireAdmin();
     
   return (
     <main className="p-8">
@@ -37,28 +38,7 @@ export default async function UsersPage() {
                 </td>
 
                 <td className="p-2 border">
-                    <select
-                    defaultValue={user.role}
-                    onChange={async (e) => {
-                        await fetch("/api/admin/users", {
-                        method: "PATCH",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            userId: user.id,
-                            role: e.target.value,
-                        }),
-                        });
-
-                        window.location.reload();
-                    }}
-                    className="border px-2 py-1"
-                    >
-                    <option value="ADMIN">ADMIN</option>
-                    <option value="ANALYST">ANALYST</option>
-                    <option value="VIEWER">VIEWER</option>
-                    </select>
+                    <RoleSelect userId={user.id} currentRole={user.role} />
                 </td>
 
                 <td className="p-2 border">
@@ -71,3 +51,5 @@ export default async function UsersPage() {
     </main>
   );
 }
+
+

@@ -29,13 +29,32 @@ export default async function Home() {
       <h1 className="text-4xl font-bold mb-8">
         DataFlow CI Dashboard
       </h1>
-      <div className="mb-6">
-        <a
+      
+      <div className="mb-8 flex gap-4 flex-wrap">
+        <Link
+          href="/sources"
+          className="border rounded px-4 py-2 bg-blue-50 hover:bg-blue-100"
+        >
+          Sources
+        </Link>
+        <Link
           href="/dashboard/quality"
-          className="text-blue-600 underline"
+          className="border rounded px-4 py-2 bg-green-50 hover:bg-green-100"
         >
           Quality Monitoring
-        </a>
+        </Link>
+        <Link
+          href="/admin/audit"
+          className="border rounded px-4 py-2 bg-orange-50 hover:bg-orange-100"
+        >
+          Audit Logs
+        </Link>
+        <Link
+          href="/admin/users"
+          className="border rounded px-4 py-2 bg-purple-50 hover:bg-purple-100"
+        >
+          User Management
+        </Link>
       </div>
       <div className="grid grid-cols-4 gap-4 mb-8">
         <div className="border rounded p-4">
