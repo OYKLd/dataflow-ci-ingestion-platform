@@ -4,8 +4,16 @@ import { redirect } from "next/navigation";
 import { createSourceSchema } from "../schemas/source.schema";
 import { createSource } from "../services/source.service";
 import { createSchemaVersion } from "@/features/source-schema/services/schema.service";
+import { getCurrentUser } from "@/lib/auth";
+import { canCreateSource } from "@/lib/permissions";
 
 export async function createSourceAction(formData: FormData) {
+  const user = await getCurrentUser();
+
+  if (!user || !canCreateSource(user)) {
+    throw new Error("Unauthorized");
+  }
+
   const data = {
     name: formData.get("name"),
     description: formData.get("description"),

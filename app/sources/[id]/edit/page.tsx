@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation";
 import { getSourceById } from "@/features/source-management/services/source.service";
 import { EditSourceForm } from "@/features/source-management/components/edit-source-form";
+import { getCurrentUser } from "@/lib/auth";
+import { canUpdateSource } from "@/lib/permissions";
+import { redirect } from "next/navigation";
 
 type Props = {
   params: Promise<{
@@ -9,6 +12,12 @@ type Props = {
 };
 
 export default async function EditSourcePage({ params }: Props) {
+  const user = await getCurrentUser();
+
+  if (!user || !canUpdateSource(user)) {
+    redirect("/sources");
+  }
+
   const { id } = await params;
   const source = await getSourceById(id);
 

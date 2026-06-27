@@ -27,10 +27,28 @@ export async function middleware(
     }
   }
 
-  // Protect other authenticated routes
+  // Protect write routes (only ADMIN or ANALYST)
+  if (pathname.startsWith("/sources/new") ||
+      pathname.startsWith("/sources/") && pathname.includes("/edit") ||
+      pathname.startsWith("/sources/") && pathname.includes("/schema") ||
+      pathname.startsWith("/my-uploads")) {
+    if (!token) {
+      return NextResponse.redirect(
+        new URL("/login", request.url)
+      );
+    }
+
+    if (token.role !== "ADMIN" && token.role !== "ANALYST") {
+      return NextResponse.redirect(
+        new URL("/", request.url)
+      );
+    }
+  }
+
+  // Protect other authenticated read routes (all authenticated users)
   if (pathname.startsWith("/sources") || 
       pathname.startsWith("/dashboard") ||
-      pathname.startsWith("/my-uploads") ||
+      pathname.startsWith("/audit") ||
       pathname.startsWith("/profile")) {
     if (!token) {
       return NextResponse.redirect(
@@ -49,5 +67,6 @@ export const config = {
     "/dashboard/:path*",
     "/my-uploads/:path*",
     "/profile/:path*",
+    "/audit/:path*",
   ],
 };

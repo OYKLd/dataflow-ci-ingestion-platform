@@ -1,15 +1,20 @@
 import { getSources } from "@/features/source-management/services/source.service";
 import Link from "next/link";
 import { SourceActions } from "@/features/source-management/components/source-actions";
+import { getCurrentUser } from "@/lib/auth";
+import { canCreateSource } from "@/lib/permissions";
 
 export default async function SourcesPage() {
   const sources = await getSources();
+  const user = await getCurrentUser();
+  const canCreate = user && canCreateSource(user);
 
   return (
     <main className="p-8">
       <h1 className="text-3xl font-bold mb-6">
         Data Sources
       </h1>
+        {canCreate && (
         <div className="mb-6">
   <Link
     href="/sources/new"
@@ -18,6 +23,7 @@ export default async function SourcesPage() {
     New Source
   </Link> 
 </div>
+        )}
       {sources.length === 0 ? (
         <p>No sources found.</p>
       ) : (

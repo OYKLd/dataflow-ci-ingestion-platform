@@ -44,7 +44,7 @@ export default async function Home() {
           Quality Monitoring
         </Link>
         <Link
-          href="/admin/audit"
+          href="/audit"
           className="border rounded px-4 py-2 bg-orange-50 hover:bg-orange-100"
         >
           Audit Logs

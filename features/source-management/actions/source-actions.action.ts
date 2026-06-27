@@ -1,6 +1,8 @@
 "use server";
 
 import { deleteSource, updateSource } from "@/features/source-management/services/source.service";
+import { getCurrentUser } from "@/lib/auth";
+import { canUpdateSource } from "@/lib/permissions";
 
 export async function deleteSourceAction(formData: FormData) {
   const sourceId = formData.get("sourceId") as string;
@@ -18,6 +20,12 @@ export async function deleteSourceAction(formData: FormData) {
 }
 
 export async function updateSourceAction(formData: FormData) {
+  const user = await getCurrentUser();
+
+  if (!user || !canUpdateSource(user)) {
+    return { error: "Unauthorized" };
+  }
+
   const sourceId = formData.get("sourceId") as string;
   const name = formData.get("name") as string;
   const description = formData.get("description") as string;

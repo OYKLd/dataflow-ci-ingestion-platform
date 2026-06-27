@@ -3,9 +3,21 @@ import { createUpload } from "@/features/file-upload/services/upload.service";
 import { processUpload } from "@/features/file-upload/services/process-upload.service";
 import fs from "fs/promises";
 import path from "path";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-options";
+import { canUpload } from "@/lib/permissions";
 
 export async function POST(request: Request) {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user || !canUpload(session.user as any)) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     const contentType = request.headers.get("content-type");
     console.log("/api/upload content-type", contentType);
 

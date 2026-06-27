@@ -4,10 +4,18 @@ import { createUpload } from "../services/upload.service";
 import { processUpload } from "../services/process-upload.service";
 import fs from "fs/promises";
 import path from "path";
+import { getCurrentUser } from "@/lib/auth";
+import { canUpload } from "@/lib/permissions";
 
 export async function uploadFileAction(
   formData: FormData
 ) {
+  const user = await getCurrentUser();
+
+  if (!user || !canUpload(user)) {
+    throw new Error("Unauthorized");
+  }
+
   const sourceId =
     formData.get("sourceId");
   const file =

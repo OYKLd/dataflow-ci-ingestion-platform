@@ -24,3 +24,15 @@ export function canDeleteSource(user: any) {
 export function canCreateSchema(user: any) {
   return user?.role === "ADMIN" || user?.role === "ANALYST";
 }
+
+export function canUpdateSource(user: any) {
+  return user?.role === "ADMIN";
+}
+
+export function canViewAudit(user: any) {
+  return user?.role === "ADMIN" || user?.role === "ANALYST" || user?.role === "VIEWER";
+}
+
+export function canViewDashboard(user: any) {
+  return user?.role === "ADMIN" || user?.role === "ANALYST" || user?.role === "VIEWER";
+}

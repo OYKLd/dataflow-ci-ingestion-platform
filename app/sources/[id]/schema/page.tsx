@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation";
 import { getSourceById } from "@/features/source-management/services/source.service";
 import { CreateSchemaForm } from "@/features/source-schema/components/create-schema-form";
+import { getCurrentUser } from "@/lib/auth";
+import { canCreateSchema } from "@/lib/permissions";
+import { redirect } from "next/navigation";
 
 type Props = {
   params: Promise<{
@@ -9,6 +12,12 @@ type Props = {
 };
 
 export default async function CreateSchemaPage({ params }: Props) {
+  const user = await getCurrentUser();
+
+  if (!user || !canCreateSchema(user)) {
+    redirect("/sources");
+  }
+
   const { id } = await params;
   const source = await getSourceById(id);
 
