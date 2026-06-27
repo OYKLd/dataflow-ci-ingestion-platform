@@ -5,7 +5,6 @@ export function CreateSourceForm() {
     <form
       action={createSourceAction}
       className="space-y-4 max-w-lg"
-      encType="multipart/form-data"
     >
       {/* NAME */}
       <div>

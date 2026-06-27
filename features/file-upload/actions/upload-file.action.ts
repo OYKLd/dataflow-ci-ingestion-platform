@@ -47,9 +47,6 @@ export async function uploadFileAction(
       file.name,
       filePath
     );
-    await processUpload(upload.id);
-
-    setTimeout(() => {
-      processUpload(upload.id).catch(console.error);
-    }, 0);
+    
+    processUpload(upload.id).catch(console.error);
 }
