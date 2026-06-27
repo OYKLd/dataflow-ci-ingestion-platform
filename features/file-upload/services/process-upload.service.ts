@@ -1,5 +1,6 @@
 ﻿import fs from "fs/promises";
 import Papa from "papaparse";
+import * as XLSX from "xlsx";
 import {
   getUploadById,
   updateUploadStats,
@@ -39,16 +40,27 @@ export async function processUpload(
     throw new Error("Invalid schema format");
   }
 
-  const fileContent = await fs.readFile(upload.filePath, "utf8");
+  const fileContent = await fs.readFile(upload.filePath);
   console.log("5 - Fichier lu");
 
-  const result = Papa.parse(fileContent, {
-    header: true,
-    skipEmptyLines: true,
-  });
-  console.log("6 - CSV parsé", result.data.length);
+  let rows: Record<string, string>[];
 
-  const rows = result.data as Record<string, string>[];
+  if (upload.fileName.endsWith('.xlsx') || upload.fileName.endsWith('.xls')) {
+    const workbook = XLSX.read(fileContent, { type: 'buffer' });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+    rows = jsonData as Record<string, string>[];
+    console.log("6 - XLSX parsé", rows.length);
+  } else {
+    const csvContent = fileContent.toString('utf8');
+    const result = Papa.parse(csvContent, {
+      header: true,
+      skipEmptyLines: true,
+    });
+    console.log("6 - CSV parsé", result.data.length);
+    rows = result.data as Record<string, string>[];
+  }
   console.log("FIRST ROW");
   console.log(rows[0]);
   let validRows = 0;

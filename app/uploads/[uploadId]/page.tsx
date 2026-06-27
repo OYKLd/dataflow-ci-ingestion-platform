@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getUploadReport } from "@/features/file-upload/services/upload.service";
 import Link from "next/link";
+import { ExportErrorsButton } from "@/features/file-upload/components/export-errors-button";
 
 type Props = {
   params: Promise<{
@@ -68,9 +69,12 @@ export default async function UploadReportPage({ params }: Props) {
 
       {upload.errors.length > 0 ? (
         <div className="border rounded p-6">
-          <h2 className="text-xl font-semibold mb-4">
-            Validation Errors ({upload.errors.length})
-          </h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">
+              Validation Errors ({upload.errors.length})
+            </h2>
+            <ExportErrorsButton errors={upload.errors} />
+          </div>
 
           <div className="overflow-x-auto">
             <table className="w-full border">

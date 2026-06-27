@@ -23,6 +23,7 @@ model User {
   password  String
   createdAt DateTime @default(now())
   role      UserRole @default(VIEWER)
+  active    Boolean  @default(true)
 }
 
 model Invitation {

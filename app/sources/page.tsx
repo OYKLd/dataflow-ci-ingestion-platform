@@ -1,5 +1,6 @@
 import { getSources } from "@/features/source-management/services/source.service";
 import Link from "next/link";
+import { SourceActions } from "@/features/source-management/components/source-actions";
 
 export default async function SourcesPage() {
   const sources = await getSources();
@@ -22,17 +23,24 @@ export default async function SourcesPage() {
       ) : (
         <div className="space-y-4">
           {sources.map((source) => (
-            <Link
+            <div
               key={source.id}
-              href={`/sources/${source.id}`}
-              className="block border rounded-lg p-4 hover:bg-gray-50 cursor-pointer"
+              className="border rounded-lg p-4 hover:bg-gray-50"
             >
-              <h2 className="font-semibold">
-                {source.name}
-              </h2>
+              <div className="flex justify-between items-start">
+                <Link
+                  href={`/sources/${source.id}`}
+                  className="flex-1"
+                >
+                  <h2 className="font-semibold">
+                    {source.name}
+                  </h2>
 
-              <p>{source.description}</p>
-            </Link>
+                  <p>{source.description}</p>
+                </Link>
+                <SourceActions sourceId={source.id} />
+              </div>
+            </div>
           ))}
         </div>
       )}

@@ -33,3 +33,44 @@ export async function updateUserRole(
 
   return user;
 }
+
+export async function toggleUserActive(userId: string, active: boolean) {
+  const user = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      active,
+    },
+  });
+
+  await createAuditLog({
+    action: "CHANGE_ROLE",
+    entityId: user.id,
+    entityType: "User",
+    metadata: {
+      active,
+    },
+  });
+
+  return user;
+}
+
+export async function deleteUser(userId: string) {
+  const user = await prisma.user.delete({
+    where: {
+      id: userId,
+    },
+  });
+
+  await createAuditLog({
+    action: "CHANGE_ROLE",
+    entityId: user.id,
+    entityType: "User",
+    metadata: {
+      deleted: true,
+    },
+  });
+
+  return user;
+}
