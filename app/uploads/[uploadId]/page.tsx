@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getUploadReport } from "@/features/file-upload/services/upload.service";
 import Link from "next/link";
 import { ExportErrorsButton } from "@/features/file-upload/components/export-errors-button";
+import { ExportValidRowsButton } from "@/features/file-upload/components/export-valid-rows-button";
 
 type Props = {
   params: Promise<{
@@ -66,6 +67,17 @@ export default async function UploadReportPage({ params }: Props) {
           <p><strong>Error Rate:</strong> {errorRate}%</p>
         </div>
       </div>
+
+      {upload.validRows > 0 && (
+        <div className="mb-8 border rounded p-4 bg-blue-50">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold text-blue-700">
+              Valid Rows ({upload.validRows})
+            </h2>
+            <ExportValidRowsButton uploadId={uploadId} />
+          </div>
+        </div>
+      )}
 
       {upload.errors.length > 0 ? (
         <div className="border rounded p-6">

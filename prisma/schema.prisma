@@ -69,6 +69,7 @@ model FileUpload {
   updatedAt    DateTime          @updatedAt
   filePath     String
   qualityScore Float             @default(0)
+  fileContent  String?
   source       Source            @relation(fields: [sourceId], references: [id])
   errors       ValidationError[]
 }
