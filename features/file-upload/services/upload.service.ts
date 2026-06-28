@@ -40,6 +40,7 @@ export async function getUploadById(uploadId: string) {
       totalRows: true,
       validRows: true,
       invalidRows: true,
+      qualityScore: true,
       createdAt: true,
       updatedAt: true,
       filePath: true,

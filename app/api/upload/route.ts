@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createUpload } from "@/features/file-upload/services/upload.service";
-import { processUpload } from "@/features/file-upload/services/process-upload.service";
+import { uploadQueue } from "@/lib/upload-queue";
 import fs from "fs/promises";
 import path from "path";
 import { getServerSession } from "next-auth";
@@ -77,9 +77,8 @@ export async function POST(request: Request) {
       filePath
     );
 
-    setTimeout(() => {
-      processUpload(upload.id).catch(console.error);
-    }, 0);
+    // Add to queue for async processing
+    uploadQueue.add(upload.id);
 
     return NextResponse.json({
       uploadId: upload.id,
