@@ -44,10 +44,20 @@ export async function POST(request: Request) {
       ? (file as any).name
       : `upload-${Date.now()}.csv`;
 
+    const fileSize = (file as any).size || 0;
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+    if (fileSize > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: "File size exceeds maximum limit of 10MB" },
+        { status: 413 }
+      );
+    }
+
     console.log("/api/upload file metadata", {
       type: typeof file,
       name: (file as any).name,
-      size: (file as any).size,
+      size: fileSize,
       keys: Object.keys(file as any),
     });
 
