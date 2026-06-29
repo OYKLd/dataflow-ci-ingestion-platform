@@ -4,7 +4,7 @@ import { getAuditLogs } from "@/features/audit/services/audit.service";
 type AuditLog = {
   id: string;
   action: string;
-  entityType: string;
+  entityType: string | null;
   createdAt: Date;
 };
 
