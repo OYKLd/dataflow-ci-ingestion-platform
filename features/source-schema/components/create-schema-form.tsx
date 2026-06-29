@@ -46,13 +46,22 @@ export function CreateSchemaForm({ sourceId }: Props) {
       return;
     }
 
-    // Validate schema structure
-    if (!schema.columns || !Array.isArray(schema.columns)) {
-      setError("Schema must have a 'columns' array");
+    // Validate schema structure - accept both formats:
+    // 1. Simple: { "columns": [...] }
+    // 2. Complete: { "schema": { "columns": [...] } }
+    let schemaColumns = schema.columns;
+    if (!schemaColumns && schema.schema && schema.schema.columns) {
+      schemaColumns = schema.schema.columns;
+    }
+
+    if (!schemaColumns || !Array.isArray(schemaColumns)) {
+      setError("Schema must have a 'columns' array (either directly or in schema.columns)");
       return;
     }
 
-    formData.append("schema", JSON.stringify(schema));
+    // Use the columns array for the schema version
+    const schemaToSave = { columns: schemaColumns };
+    formData.append("schema", JSON.stringify(schemaToSave));
 
     try {
       const result = await createSchemaVersionAction(formData);
@@ -81,13 +90,15 @@ export function CreateSchemaForm({ sourceId }: Props) {
           rows={12}
           className="border p-2 w-full font-mono"
           placeholder={`{
-  "columns": [
-    {
-      "name": "column_name",
-      "type": "string",
-      "required": true
-    }
-  ]
+  "schema": {
+    "columns": [
+      {
+        "name": "column_name",
+        "type": "string",
+        "required": true
+      }
+    ]
+  }
 }`}
         />
       </div>
