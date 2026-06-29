@@ -32,22 +32,11 @@ export async function createSchemaVersionAction(formData: FormData) {
 
     const nextVersion = (latestVersion?.version || 0) + 1;
 
-    // Deactivate all other versions for this source
-    await prisma.schemaVersion.updateMany({
-      where: {
-        sourceId,
-      },
-      data: {
-        active: false,
-      },
-    });
-
     const schemaVersion = await prisma.schemaVersion.create({
       data: {
         sourceId,
         version: nextVersion,
         schema,
-        active: true,
       },
     });
 

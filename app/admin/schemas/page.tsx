@@ -6,7 +6,6 @@ import { prisma } from "@/lib/prisma";
 type SchemaVersion = {
   id: string;
   version: number;
-  active: boolean;
   createdAt: string;
   schema: any;
   source: {
@@ -37,18 +36,6 @@ export default function SchemaVersionsPage() {
     }
   };
 
-  const activateSchema = async (schemaId: string) => {
-    try {
-      const response = await fetch(`/api/admin/schemas/${schemaId}/activate`, {
-        method: "POST",
-      });
-      if (!response.ok) throw new Error("Failed to activate schema");
-      await fetchSchemas();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to activate schema");
-    }
-  };
-
   if (loading) return <div className="p-8">Loading...</div>;
   if (error) return <div className="p-8 text-red-600">{error}</div>;
 
@@ -75,29 +62,14 @@ export default function SchemaVersionsPage() {
             {versions.sort((a, b) => b.version - a.version).map((schema) => (
               <div
                 key={schema.id}
-                className={`flex items-center justify-between p-3 rounded border ${
-                  schema.active ? "bg-green-50 border-green-200" : "bg-gray-50"
-                }`}
+                className="flex items-center justify-between p-3 rounded border bg-gray-50"
               >
                 <div>
                   <span className="font-medium">Version {schema.version}</span>
                   <span className="text-sm text-gray-600 ml-2">
                     {new Date(schema.createdAt).toLocaleDateString()}
                   </span>
-                  {schema.active && (
-                    <span className="ml-2 px-2 py-1 bg-green-600 text-white text-xs rounded">
-                      Active
-                    </span>
-                  )}
                 </div>
-                {!schema.active && (
-                  <button
-                    onClick={() => activateSchema(schema.id)}
-                    className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-                  >
-                    Activate
-                  </button>
-                )}
               </div>
             ))}
           </div>

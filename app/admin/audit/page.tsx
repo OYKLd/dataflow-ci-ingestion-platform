@@ -8,6 +8,8 @@ type AuditLog = {
   createdAt: Date;
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function AuditPage() {
   // On typpe explicitement le résultat
   const logs: AuditLog[] = await getAuditLogs();

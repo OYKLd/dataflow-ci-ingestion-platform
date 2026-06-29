@@ -49,7 +49,9 @@ export async function getActiveSchemaVersion(
   return prisma.schemaVersion.findFirst({
     where: {
       sourceId,
-      active: true,
+    },
+    orderBy: {
+      version: "desc",
     },
   });
 }

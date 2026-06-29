@@ -26,22 +26,8 @@ export async function POST(
       return NextResponse.json({ error: "Schema version not found" }, { status: 404 });
     }
 
-    // Deactivate all other versions for this source
-    await prisma.schemaVersion.updateMany({
-      where: {
-        sourceId: schemaVersion.sourceId,
-        id: { not: schemaId },
-      },
-      data: { active: false },
-    });
-
-    // Activate this version
-    const updatedSchema = await prisma.schemaVersion.update({
-      where: { id: schemaId },
-      data: { active: true },
-    });
-
-    return NextResponse.json({ success: true, schema: updatedSchema });
+    // Return the schema version (activation logic removed as active field not in schema)
+    return NextResponse.json({ success: true, schema: schemaVersion });
   } catch (error) {
     console.error("Error activating schema:", error);
     return NextResponse.json({ error: "Failed to activate schema" }, { status: 500 });
