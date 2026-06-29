@@ -1,5 +1,6 @@
 ﻿import Papa from "papaparse";
 import * as XLSX from "xlsx";
+import { head } from "@vercel/blob";
 import {
   getUploadById,
   updateUploadStats,
@@ -40,9 +41,14 @@ export async function processUpload(
       throw new Error("Invalid schema format");
     }
 
-    const response = await fetch(upload.filePath);
+    const blob = await head(upload.filePath);
+    const response = await fetch(upload.filePath, {
+      headers: {
+        Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`,
+      },
+    });
     const fileContent = Buffer.from(await response.arrayBuffer());
-    console.log("5 - Fichier lu depuis Blob");
+    console.log("5 - Fichier lu depuis Blob", { size: fileContent.length });
 
     let rows: Record<string, string>[];
 
