@@ -28,7 +28,7 @@ export function CreateSchemaForm({ sourceId }: Props) {
     setColumns(columns.filter((_, i) => i !== index));
   };
 
-  const updateColumn = (index: number, field: keyof Column, value: any) => {
+  const updateColumn = (index: number, field: keyof Column, value: Column[keyof Column]) => {
     const newColumns = [...columns];
     newColumns[index][field] = value;
     setColumns(newColumns);
