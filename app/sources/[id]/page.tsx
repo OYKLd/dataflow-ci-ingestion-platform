@@ -37,9 +37,19 @@ export default async function SourceDetailsPage(
       </p>
 
       <div className="mt-8">
-        <h2 className="text-xl font-semibold">
-          Schema Versions
-        </h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">
+            Schema Versions
+          </h2>
+          {user && canUpload(user) && (
+            <a
+              href={`/sources/${source.id}/schema`}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              + Create New Schema
+            </a>
+          )}
+        </div>
 
         <p>
           {source.schemas.length} version(s)

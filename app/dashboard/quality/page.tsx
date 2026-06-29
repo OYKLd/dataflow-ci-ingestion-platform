@@ -1,5 +1,7 @@
 import { getQualityBySource } from "@/features/dashboard/services/quality.service";
 
+export const dynamic = 'force-dynamic';
+
 export default async function QualityPage() {
   const sources =
     await getQualityBySource();

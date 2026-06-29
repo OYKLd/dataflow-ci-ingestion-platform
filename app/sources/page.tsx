@@ -4,6 +4,8 @@ import { SourceActions } from "@/features/source-management/components/source-ac
 import { getCurrentUser } from "@/lib/auth";
 import { canCreateSource } from "@/lib/permissions";
 
+export const dynamic = 'force-dynamic';
+
 export default async function SourcesPage() {
   const sources = await getSources();
   const user = await getCurrentUser();

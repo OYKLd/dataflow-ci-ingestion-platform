@@ -266,7 +266,7 @@ Admin :
 
 ```text
 Email : admin@dataflow.ci
-Password : admin123!
+Password : Admin123!
 ```
 
 ---
