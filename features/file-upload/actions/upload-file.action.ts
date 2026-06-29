@@ -2,8 +2,7 @@
 
 import { createUpload } from "../services/upload.service";
 import { processUpload } from "../services/process-upload.service";
-import fs from "fs/promises";
-import path from "path";
+import { put } from "@vercel/blob";
 import { getCurrentUser } from "@/lib/auth";
 import { canUpload } from "@/lib/permissions";
 
@@ -29,23 +28,17 @@ export async function uploadFileAction(
     throw new Error("File required");
   }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const uploadDir = path.join(
-      process.cwd(),
-      "uploads"
-    );
-    await fs.mkdir(uploadDir, { recursive: true });
-    const filePath = path.join(
-      uploadDir,
-      `${Date.now()}-${file.name}`
-    );
-    await fs.writeFile(filePath, buffer);
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
+  
+  const { url } = await put(`${Date.now()}-${file.name}`, buffer, {
+    access: 'public',
+  });
 
     const upload = await createUpload(
       sourceId,
       file.name,
-      filePath
+      url
     );
     
     processUpload(upload.id).catch(console.error);
