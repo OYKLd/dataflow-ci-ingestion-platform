@@ -5,7 +5,7 @@ import { canCreateSchema } from "@/lib/permissions";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { schemaId: string } }
+  { params }: { params: Promise<{ schemaId: string }> }
 ) {
   const user = await getCurrentUser();
 
@@ -13,7 +13,7 @@ export async function POST(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { schemaId } = params;
+  const { schemaId } = await params;
 
   try {
     // Get the schema version to activate
