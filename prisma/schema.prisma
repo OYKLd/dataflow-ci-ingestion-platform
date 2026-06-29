@@ -51,6 +51,7 @@ model SchemaVersion {
   sourceId  String
   version   Int
   schema    Json
+  active    Boolean  @default(false)
   createdAt DateTime @default(now())
   source    Source   @relation(fields: [sourceId], references: [id])
 

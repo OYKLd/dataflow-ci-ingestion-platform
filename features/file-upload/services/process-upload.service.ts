@@ -8,7 +8,7 @@ import {
 } from "./upload.service";
 import { SourceSchema } from "@/features/source-management/types/schema";
 import {
-  getLatestSchemaVersion,
+  getActiveSchemaVersion,
 } from "@/features/source-schema/services/schema.service";
 import {
   validateRow,
@@ -26,7 +26,7 @@ export async function processUpload(
       throw new Error("Upload not found");
     }
 
-    const schemaVersion = await getLatestSchemaVersion(upload.sourceId);
+    const schemaVersion = await getActiveSchemaVersion(upload.sourceId);
     console.log("3 - Schéma récupéré", schemaVersion);
 
     if (!schemaVersion) {

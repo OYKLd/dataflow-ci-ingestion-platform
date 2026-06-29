@@ -42,3 +42,14 @@ export async function getLatestSchemaVersion(
     },
   });
 }
+
+export async function getActiveSchemaVersion(
+  sourceId: string
+) {
+  return prisma.schemaVersion.findFirst({
+    where: {
+      sourceId,
+      active: true,
+    },
+  });
+}
