@@ -69,7 +69,7 @@ export function CreateSchemaForm({ sourceId }: Props) {
         setError(result.error);
       } else {
         setSuccess("Schema created successfully");
-        (e.currentTarget as HTMLFormElement).reset();
+        e.currentTarget?.reset();
         setTimeout(() => window.location.reload(), 1500);
       }
     } catch (err) {
