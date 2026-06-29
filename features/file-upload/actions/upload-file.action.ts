@@ -32,7 +32,7 @@ export async function uploadFileAction(
   const buffer = Buffer.from(bytes);
   
   const { url } = await put(`${Date.now()}-${file.name}`, buffer, {
-    access: 'public',
+    access: 'private',
   });
 
     const upload = await createUpload(

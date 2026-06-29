@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { createUpload } from "@/features/file-upload/services/upload.service";
 import { uploadQueue } from "@/lib/upload-queue";
-import fs from "fs/promises";
-import path from "path";
+import { put } from "@vercel/blob";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { canUpload } from "@/lib/permissions";
@@ -63,18 +62,15 @@ export async function POST(request: Request) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const uploadDir = path.join(process.cwd(), "uploads");
-    await fs.mkdir(uploadDir, { recursive: true });
-    const filePath = path.join(
-      uploadDir,
-      `${Date.now()}-${fileName}`
-    );
-    await fs.writeFile(filePath, buffer);
+    
+    const { url } = await put(`${Date.now()}-${fileName}`, buffer, {
+      access: 'private',
+    });
 
     const upload = await createUpload(
       sourceId,
       fileName,
-      filePath
+      url
     );
 
     // Add to queue for async processing

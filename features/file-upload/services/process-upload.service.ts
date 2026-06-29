@@ -1,5 +1,4 @@
-﻿import fs from "fs/promises";
-import Papa from "papaparse";
+﻿import Papa from "papaparse";
 import * as XLSX from "xlsx";
 import {
   getUploadById,
@@ -41,8 +40,9 @@ export async function processUpload(
       throw new Error("Invalid schema format");
     }
 
-    const fileContent = await fs.readFile(upload.filePath);
-    console.log("5 - Fichier lu");
+    const response = await fetch(upload.filePath);
+    const fileContent = Buffer.from(await response.arrayBuffer());
+    console.log("5 - Fichier lu depuis Blob");
 
     let rows: Record<string, string>[];
 
