@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { getUploadReport } from "@/features/file-upload/services/upload.service";
-import fs from "fs/promises";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
 
@@ -29,7 +28,12 @@ export async function GET(
   const errorRowNumbers = new Set(upload.errors.map((error) => error.rowNumber));
 
   try {
-    const fileContent = await fs.readFile(upload.filePath);
+    const response = await fetch(upload.filePath, {
+      headers: {
+        Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`,
+      },
+    });
+    const fileContent = Buffer.from(await response.arrayBuffer());
     let rows: Record<string, string>[];
     let headers: string[];
 
