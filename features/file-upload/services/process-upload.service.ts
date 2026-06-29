@@ -35,7 +35,13 @@ export async function processUpload(
 
     const raw = schemaVersion.schema as any;
 
-    const schema = raw?.schema;
+    // Accept both schema formats:
+    // 1. Simple: { columns: [...] }
+    // 2. Complete: { schema: { columns: [...] } }
+    let schema = raw?.schema;
+    if (!schema || !Array.isArray(schema.columns)) {
+      schema = raw;
+    }
 
     if (!schema || !Array.isArray(schema.columns)) {
       throw new Error("Invalid schema format");
